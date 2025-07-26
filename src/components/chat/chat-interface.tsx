@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
+import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -52,16 +53,14 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('YOUR_BACKEND_ENDPOINT', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: currentInput, sessionId }),
+      const response = await axios.post('YOUR_BACKEND_ENDPOINT', {
+        message: currentInput,
+        sessionId
       });
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
+      
       const agentMessage: Message = {
         id: crypto.randomUUID(),
-        text: data.reply, // Make sure your backend response has a 'reply' field
+        text: response.data.reply, // Make sure your backend response has a 'reply' field
         sender: 'agent',
       };
       setMessages((prev) => [...prev, agentMessage]);
