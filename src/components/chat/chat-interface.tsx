@@ -30,7 +30,7 @@ export function ChatInterface() {
         const newSessionId = crypto.randomUUID();
         setSessionId(newSessionId);
         try {
-          await axios.post('create_session_endpoint', { sessionId: newSessionId });
+          await axios.post('http://localhost:8000/apps/${app_name}/users/${user_id}/sessions', { sessionId: newSessionId });
         } catch (error) {
           console.error('Error creating session:', error);
           const errorMessage: Message = {
