@@ -28,7 +28,7 @@ export function ChatInterface() {
         setSessionId(crypto.randomUUID());
     }
     setMessages([
-      { id: 'initial-message', text: "Hello! I'm your ADK assistant. How can I help you today?", sender: 'agent' }
+      { id: 'initial-message', text: "Hello! I'm your assistant. How can I help you today?", sender: 'agent' }
     ]);
   }, []);
   
@@ -51,43 +51,44 @@ export function ChatInterface() {
     setInputValue('');
     setIsLoading(true);
 
-    // In a real application, you would make a fetch request to your backend:
-    // try {
-    //   const response = await fetch('/run', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ message: currentInput, sessionId }),
-    //   });
-    //   if (!response.ok) throw new Error('Network response was not ok');
-    //   const data = await response.json();
-    //   const agentMessage: Message = {
-    //     id: crypto.randomUUID(),
-    //     text: data.reply,
-    //     sender: 'agent',
-    //   };
-    //   setMessages((prev) => [...prev, agentMessage]);
-    // } catch (error) {
-    //   console.error('Error sending message:', error);
-    //   const errorMessage: Message = {
-    //     id: crypto.randomUUID(),
-    //     text: 'Sorry, I encountered an error. Please try again.',
-    //     sender: 'agent',
-    //   };
-    //   setMessages((prev) => [...prev, errorMessage]);
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    // TODO: Replace this with your custom backend call
+    try {
+      // const response = await fetch('YOUR_BACKEND_ENDPOINT', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ message: currentInput, sessionId }),
+      // });
+      // if (!response.ok) throw new Error('Network response was not ok');
+      // const data = await response.json();
+      // const agentMessage: Message = {
+      //   id: crypto.randomUUID(),
+      //   text: data.reply, // Make sure your backend response has a 'reply' field
+      //   sender: 'agent',
+      // };
+      // setMessages((prev) => [...prev, agentMessage]);
+      
+      // Simulating backend response for this frontend prototype
+      setTimeout(() => {
+        const agentResponse: Message = {
+          id: crypto.randomUUID(),
+          text: `This is a simulated response to: "${currentInput}"`,
+          sender: 'agent',
+        };
+        setMessages((prev) => [...prev, agentResponse]);
+        setIsLoading(false);
+      }, 1500);
 
-    // Simulating backend response for this frontend prototype
-    setTimeout(() => {
-      const agentResponse: Message = {
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage: Message = {
         id: crypto.randomUUID(),
-        text: `This is a simulated response to: "${currentInput}"`,
+        text: 'Sorry, I encountered an error. Please try again.',
         sender: 'agent',
       };
-      setMessages((prev) => [...prev, agentResponse]);
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -95,7 +96,7 @@ export function ChatInterface() {
       <header className="p-4 border-b border-border/20 shadow-sm bg-background/80 backdrop-blur-sm sticky top-0 z-10">
         <h1 className="text-xl font-bold text-center font-headline flex items-center justify-center gap-2">
           <Bot className="text-primary" />
-          ADK Messenger
+          Chat
         </h1>
       </header>
       
