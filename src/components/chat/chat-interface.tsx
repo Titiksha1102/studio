@@ -51,33 +51,21 @@ export function ChatInterface() {
     setInputValue('');
     setIsLoading(true);
 
-    // TODO: Replace this with your custom backend call
     try {
-      // const response = await fetch('YOUR_BACKEND_ENDPOINT', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ message: currentInput, sessionId }),
-      // });
-      // if (!response.ok) throw new Error('Network response was not ok');
-      // const data = await response.json();
-      // const agentMessage: Message = {
-      //   id: crypto.randomUUID(),
-      //   text: data.reply, // Make sure your backend response has a 'reply' field
-      //   sender: 'agent',
-      // };
-      // setMessages((prev) => [...prev, agentMessage]);
+      const response = await fetch('YOUR_BACKEND_ENDPOINT', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: currentInput, sessionId }),
+      });
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      const agentMessage: Message = {
+        id: crypto.randomUUID(),
+        text: data.reply, // Make sure your backend response has a 'reply' field
+        sender: 'agent',
+      };
+      setMessages((prev) => [...prev, agentMessage]);
       
-      // Simulating backend response for this frontend prototype
-      setTimeout(() => {
-        const agentResponse: Message = {
-          id: crypto.randomUUID(),
-          text: `This is a simulated response to: "${currentInput}"`,
-          sender: 'agent',
-        };
-        setMessages((prev) => [...prev, agentResponse]);
-        setIsLoading(false);
-      }, 1500);
-
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
