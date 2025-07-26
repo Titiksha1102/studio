@@ -25,9 +25,26 @@ export function ChatInterface() {
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.crypto) {
-        setSessionId(crypto.randomUUID());
-    }
+    const createSession = async () => {
+      if (typeof window !== 'undefined' && window.crypto) {
+        const newSessionId = crypto.randomUUID();
+        setSessionId(newSessionId);
+        try {
+          await axios.post('create_session_endpoint', { sessionId: newSessionId });
+        } catch (error) {
+          console.error('Error creating session:', error);
+          const errorMessage: Message = {
+            id: crypto.randomUUID(),
+            text: 'Sorry, I encountered an error setting up the session.',
+            sender: 'agent',
+          };
+          setMessages(prev => [errorMessage, ...prev]);
+        }
+      }
+    };
+
+    createSession();
+
     setMessages([
       { id: 'initial-message', text: "Hello! I'm your assistant. How can I help you today?", sender: 'agent' }
     ]);
