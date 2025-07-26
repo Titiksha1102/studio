@@ -70,10 +70,15 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('YOUR_BACKEND_ENDPOINT', {
-        message: currentInput,
-        sessionId
-      });
+      const response = await axios.post('http://localhost:8000/run', {
+        "app_name": "simple_agent",
+        "user_id": "123",
+        "session_id": "3f6dd755-2878-4017-b8d5-aa4f04a16570",
+        "new_message": {
+            "role": "user",
+            "parts": [{"text": "hello"}]
+        }
+    });
       
       const agentMessage: Message = {
         id: crypto.randomUUID(),
