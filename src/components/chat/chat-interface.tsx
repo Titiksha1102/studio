@@ -28,8 +28,8 @@ export function ChatInterface() {
     const createSession = async () => {
       if (typeof window !== 'undefined' && window.crypto) {
         try {  
-          var result = await axios.post('http://localhost:8000/apps/${app_name}/users/${user_id}/sessions', { sessionId: newSessionId });
-          setSessionId(result.data.session_id);
+          var result = await axios.post('http://localhost:8000/apps/${NEXT_APP_NAME}/users/${NEXT_USER_ID}/sessions');
+          setSessionId(result.data.id);
         } catch (error) {
           console.error('Error creating session:', error);
           const errorMessage: Message = {
