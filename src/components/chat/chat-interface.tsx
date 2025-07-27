@@ -27,8 +27,8 @@ export function ChatInterface() {
   useEffect(() => {
     const createSession = async () => {
       if (typeof window !== 'undefined' && window.crypto) {
-        try {  
-          var result = await axios.post(`http://localhost:8000/apps/${process.env.NEXT_PUBLIC_APP_NAME}/users/${process.env.NEXT_PUBLIC_USER_ID}/sessions`);
+        try {
+          const result = await axios.post(`http://localhost:8000/apps/${process.env.NEXT_PUBLIC_APP_NAME}/users/${process.env.NEXT_PUBLIC_USER_ID}/sessions`);
           setSessionId(result.data.id);
           console.log('Session created:', result.data.id);
         } catch (error) {
@@ -49,7 +49,7 @@ export function ChatInterface() {
       { id: 'initial-message', text: "Hello! I'm your assistant. How can I help you today?", sender: 'agent' }
     ]);
   }, []);
-  
+
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
@@ -71,25 +71,26 @@ export function ChatInterface() {
 
     try {
       const response = await axios.post('http://localhost:8000/run', {
-        "app_name": process.env.NEXT_PUBLIC_APP_NAME,
-        "user_id": process.env.NEXT_PUBLIC_USER_ID,
-        "session_id": sessionId,
-        "new_message": {
-            "role": "user",
-            "parts": [{"text": currentInput}]
+        app_name: process.env.NEXT_PUBLIC_APP_NAME,
+        user_id: process.env.NEXT_PUBLIC_USER_ID,
+        session_id: sessionId,
+        new_message: {
+          role: "user",
+          parts: [{ text: currentInput }]
         }
-      
-    });
-    console.log('Response from backend:', response.data[response.data.length-1]);
-      
-      const agentMessage: Message = {
+      });
+
+      const agentText = response.data[response.data.length - 1].content.parts[0].text;
+
+      const agentResponse: Message = {
         id: crypto.randomUUID(),
-        text: response.data.reply, // Make sure your backend response has a 'reply' field
+        text: agentText,
         sender: 'agent',
       };
-      console.log('Agent response:', agentMessage.text);
-      setMessages((prev) => [...prev, agentMessage]);
-      
+
+      console.log('Agent response:', agentResponse);
+
+      setMessages((prev) => [...prev, agentResponse]);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
@@ -111,15 +112,13 @@ export function ChatInterface() {
           Chat
         </h1>
       </header>
-      
+
       <main className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-6">
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex items-end gap-3 w-full ${
-                message.sender === 'user' ? 'justify-end' : 'justify-start'
-              }`}
+              className={`flex items-end gap-3 w-full ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {message.sender === 'agent' && (
                 <Avatar className="h-8 w-8 bg-secondary">
@@ -129,11 +128,10 @@ export function ChatInterface() {
                 </Avatar>
               )}
               <div
-                className={`max-w-[80%] rounded-2xl p-3 shadow-md font-body text-sm ${
-                  message.sender === 'user'
-                    ? 'bg-primary text-primary-foreground rounded-br-none'
-                    : 'bg-secondary text-secondary-foreground rounded-bl-none'
-                }`}
+                className={`max-w-[80%] rounded-2xl p-3 shadow-md font-body text-sm ${message.sender === 'user'
+                  ? 'bg-primary text-primary-foreground rounded-br-none'
+                  : 'bg-secondary text-secondary-foreground rounded-bl-none'
+                  }`}
               >
                 <p>{message.text}</p>
               </div>
@@ -143,14 +141,14 @@ export function ChatInterface() {
             <div className="flex items-end gap-3 justify-start">
               <Avatar className="h-8 w-8 bg-secondary">
                 <AvatarFallback className="bg-transparent">
-                    <Bot className="text-secondary-foreground" />
+                  <Bot className="text-secondary-foreground" />
                 </AvatarFallback>
               </Avatar>
               <div className="bg-secondary rounded-2xl p-3 shadow-md rounded-bl-none">
                 <div className="flex items-center justify-center space-x-1.5">
-                    <span className="h-2 w-2 bg-muted-foreground rounded-full animate-pulse [animation-delay:-0.3s]"></span>
-                    <span className="h-2 w-2 bg-muted-foreground rounded-full animate-pulse [animation-delay:-0.15s]"></span>
-                    <span className="h-2 w-2 bg-muted-foreground rounded-full animate-pulse"></span>
+                  <span className="h-2 w-2 bg-muted-foreground rounded-full animate-pulse [animation-delay:-0.3s]"></span>
+                  <span className="h-2 w-2 bg-muted-foreground rounded-full animate-pulse [animation-delay:-0.15s]"></span>
+                  <span className="h-2 w-2 bg-muted-foreground rounded-full animate-pulse"></span>
                 </div>
               </div>
             </div>
@@ -158,7 +156,7 @@ export function ChatInterface() {
           <div ref={messagesEndRef} />
         </div>
       </main>
-      
+
       <footer className="p-4 border-t border-border/20 bg-background/80 backdrop-blur-sm sticky bottom-0">
         <form onSubmit={handleSendMessage} className="flex items-center gap-3">
           <Input
