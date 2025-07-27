@@ -28,8 +28,9 @@ export function ChatInterface() {
     const createSession = async () => {
       if (typeof window !== 'undefined' && window.crypto) {
         try {  
-          var result = await axios.post('http://localhost:8000/apps/${NEXT_APP_NAME}/users/${NEXT_USER_ID}/sessions');
+          var result = await axios.post(`http://localhost:8000/apps/${process.env.NEXT_PUBLIC_APP_NAME}/users/${process.env.NEXT_PUBLIC_USER_ID}/sessions`);
           setSessionId(result.data.id);
+          console.log('Session created:', result.data.id);
         } catch (error) {
           console.error('Error creating session:', error);
           const errorMessage: Message = {
@@ -70,20 +71,23 @@ export function ChatInterface() {
 
     try {
       const response = await axios.post('http://localhost:8000/run', {
-        "app_name": "simple_agent",
-        "user_id": "123",
-        "session_id": "3f6dd755-2878-4017-b8d5-aa4f04a16570",
+        "app_name": process.env.NEXT_PUBLIC_APP_NAME,
+        "user_id": process.env.NEXT_PUBLIC_USER_ID,
+        "session_id": sessionId,
         "new_message": {
             "role": "user",
-            "parts": [{"text": "hello"}]
+            "parts": [{"text": currentInput}]
         }
+      
     });
+    console.log('Response from backend:', response.data[response.data.length-1]);
       
       const agentMessage: Message = {
         id: crypto.randomUUID(),
         text: response.data.reply, // Make sure your backend response has a 'reply' field
         sender: 'agent',
       };
+      console.log('Agent response:', agentMessage.text);
       setMessages((prev) => [...prev, agentMessage]);
       
     } catch (error) {
